@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по теории вероятностей</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Тест по теории вероятностей</h1>
+        <div class="stats">
+            <span id="question-counter">Вопрос 1 из 50</span>
+            <span id="score">Счет: 0</span>
+        </div>
+        <div id="question-container">
+            <p id="question"></p>
+            <div id="options" class="options-container"></div>
+        </div>
+        <button id="preview-btn">Посмотреть текущий результат</button>
+        <button id="next-btn" class="hidden">Следующий вопрос</button>
+        <div id="result" class="hidden">
+            <h2>Результаты теста</h2>
+            <p>Вы ответили правильно на <span id="final-score">0</span> из <span id="total-questions">0</span> вопросов</p>
+            <p>Процент правильных ответов: <span id="percentage">0</span>%</p>
+            <button id="restart-btn">Пройти тест снова</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
