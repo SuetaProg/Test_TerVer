@@ -1,4 +1,5 @@
 // Массив вопросов из вашего PDF
+
 const questions = [
     {
         question: "Невозможное событие – это",
@@ -985,7 +986,7 @@ const questions = [
             "cov(ξ, η) = Dξ + Dη + 2cov(ξ, η)",
             "cov(ξ, η) = Dξ − Dη − 2cov(ξ, η)"
         ],
-        correct: 2,
+        correct: 0,
         explanation: "Это свойство связано с дисперсией суммы случайных величин."
     },
     {
@@ -1287,6 +1288,7 @@ const questions = [
     }
 ];
 
+let isReversedOrder = false;
 let currentQuestion = 0;
 let score = 0;
 let userAnswers = [];
@@ -1341,7 +1343,6 @@ function showPreviewResult() {
     nextButton.classList.add("hidden");
     resultElement.classList.remove("hidden");
 
-    // Рассчитываем текущий результат только по отвеченным вопросам
     const answeredQuestions = userAnswers.filter(answer => answer !== undefined).length;
     const currentScore = userAnswers.reduce((acc, answer, index) => {
         if (answer !== undefined && answer === shuffledQuestions[index].correct) {
@@ -1354,37 +1355,53 @@ function showPreviewResult() {
     totalQuestionsElement.textContent = answeredQuestions;
     percentageElement.textContent = answeredQuestions > 0 ? Math.round((currentScore / answeredQuestions) * 100) : 0;
 
-    // Показываем ответы только на отвеченные вопросы
-    const answersList = document.createElement("div");
-    answersList.classList.add("answers-list");
-    
-    shuffledQuestions.forEach((q, i) => {
-        if (userAnswers[i] !== undefined) {
-            const answerItem = document.createElement("div");
-            answerItem.classList.add("answer-item");
-            const isCorrect = userAnswers[i] === q.correct;
-            
-            answerItem.innerHTML = `
-                <p><strong>Вопрос ${i + 1}:</strong> ${q.question}</p>
-                <p class="${isCorrect ? 'correct' : 'incorrect'}">
-                    Ваш ответ: ${q.options[userAnswers[i]]}
-                    ${isCorrect ? '✓' : `✗ (Правильный: ${q.options[q.correct]})`}
-                </p>
-                ${q.explanation ? `<p class="explanation">Пояснение: ${q.explanation}</p>` : ''}
-            `;
-            answersList.appendChild(answerItem);
-        }
+    const reverseOrderBtn = document.getElementById("reverse-order-btn");
+    reverseOrderBtn.textContent = "Показать в обратном порядке";
+    reverseOrderBtn.addEventListener("click", () => {
+        isReversedOrder = !isReversedOrder;
+        reverseOrderBtn.textContent = isReversedOrder 
+            ? "Показать в обычном порядке" 
+            : "Показать в обратном порядке";
+        renderAnswersList();
     });
-
-    // Удаляем старый список ответов, если он есть
-    const oldAnswersList = document.querySelector(".answers-list");
-    if (oldAnswersList) {
-        oldAnswersList.remove();
+    
+    function renderAnswersList() {
+        const answersContainer = document.getElementById("answers-container");
+        answersContainer.innerHTML = "";
+    
+        const answersList = document.createElement("div");
+        answersList.classList.add("answers-list");
+    
+        let displayQuestions = [...shuffledQuestions];
+    
+        if (isReversedOrder) {
+            displayQuestions = [...shuffledQuestions].reverse();
+        }
+    
+        displayQuestions.forEach((q, i) => {
+            const originalIndex = shuffledQuestions.indexOf(q);
+            if (userAnswers[originalIndex] !== undefined) {
+                const answerItem = document.createElement("div");
+                answerItem.classList.add("answer-item");
+                const isCorrect = userAnswers[originalIndex] === q.correct;
+            
+                answerItem.innerHTML = `
+                    <p><strong>Вопрос ${originalIndex + 1}:</strong> ${q.question}</p>
+                    <p class="${isCorrect ? 'correct' : 'incorrect'}">
+                        Ваш ответ: ${q.options[userAnswers[originalIndex]]}
+                        ${isCorrect ? '✓' : `✗ (Правильный: ${q.options[q.correct]})`}
+                    </p>
+                    ${q.explanation ? `<p class="explanation">Пояснение: ${q.explanation}</p>` : ''}
+                `;
+                answersList.appendChild(answerItem);
+            }
+        });
+    
+        answersContainer.appendChild(answersList);
     }
+    
+    renderAnswersList();
 
-    resultElement.appendChild(answersList);
-
-    // Изменяем текст кнопки "Пройти тест снова" на "Продолжить тест"
     const restartBtn = document.getElementById("restart-btn");
     restartBtn.textContent = "Продолжить тест";
     restartBtn.addEventListener("click", () => {
@@ -1410,50 +1427,75 @@ function showResult() {
     totalQuestionsElement.textContent = shuffledQuestions.length;
     percentageElement.textContent = Math.round((score / shuffledQuestions.length) * 100);
 
-    // Показываем правильные ответы
-    const answersList = document.createElement("div");
-    answersList.classList.add("answers-list");
-    
-    shuffledQuestions.forEach((q, i) => {
-        const answerItem = document.createElement("div");
-        answerItem.classList.add("answer-item");
-        const isCorrect = userAnswers[i] === q.correct;
-        
-        answerItem.innerHTML = `
-            <p><strong>Вопрос ${i + 1}:</strong> ${q.question}</p>
-            <p class="${isCorrect ? 'correct' : 'incorrect'}">
-                Ваш ответ: ${q.options[userAnswers[i]] || 'Нет ответа'}
-                ${isCorrect ? '✓' : `✗ (Правильный: ${q.options[q.correct]})`}
-            </p>
-            ${q.explanation ? `<p class="explanation">Пояснение: ${q.explanation}</p>` : ''}
-        `;
-        answersList.appendChild(answerItem);
+    const reverseOrderBtn = document.getElementById("reverse-order-btn");
+    reverseOrderBtn.textContent = "Показать в обратном порядке";
+    reverseOrderBtn.addEventListener("click", () => {
+        isReversedOrder = !isReversedOrder;
+        reverseOrderBtn.textContent = isReversedOrder 
+            ? "Показать в обычном порядке" 
+            : "Показать в обратном порядке";
+        renderAnswersList();
     });
+    
+    function renderAnswersList() {
+        const answersContainer = document.getElementById("answers-container");
+        answersContainer.innerHTML = "";
+        
+        const answersList = document.createElement("div");
+        answersList.classList.add("answers-list");
+        
+        let indices = [];
+        for (let i = 0; i < shuffledQuestions.length; i++) {
+            indices.push(i);
+        }
+        
+        if (isReversedOrder) {
+            indices = indices.reverse();
+        }
+        
+        indices.forEach(index => {
+            const q = shuffledQuestions[index];
+            const answerItem = document.createElement("div");
+            answerItem.classList.add("answer-item");
+            const isCorrect = userAnswers[index] === q.correct;
+            
+            answerItem.innerHTML = `
+                <p><strong>Вопрос ${index + 1}:</strong> ${q.question}</p>
+                <p class="${isCorrect ? 'correct' : 'incorrect'}">
+                    Ваш ответ: ${q.options[userAnswers[index]] || 'Нет ответа'}
+                    ${isCorrect ? '✓' : `✗ (Правильный: ${q.options[q.correct]})`}
+                </p>
+                ${q.explanation ? `<p class="explanation">Пояснение: ${q.explanation}</p>` : ''}
+            `;
+            answersList.appendChild(answerItem);
+        });
+        
+        answersContainer.appendChild(answersList);
+    }
+    
+    renderAnswersList();
 
-    resultElement.appendChild(answersList);
-
-    document.getElementById("restart-btn").addEventListener("click", () => {
+    const restartBtn = document.getElementById("restart-btn");
+    restartBtn.textContent = "Начать тест заново";
+    restartBtn.addEventListener("click", () => {
         currentQuestion = 0;
         score = 0;
         userAnswers = [];
+        isReversedOrder = false;
+        shuffledQuestions.sort(() => Math.random() - 0.5);
         questionContainer.classList.remove("hidden");
         resultElement.classList.add("hidden");
         showQuestion();
     });
 }
 
-// Назначаем обработчики событий
+document.getElementById("preview-btn").addEventListener("click", showPreviewResult);
 document.getElementById("next-btn").addEventListener("click", () => {
-    const selectedOption = userAnswers[currentQuestion];
-    if (selectedOption === shuffledQuestions[currentQuestion].correct) {
+    if (userAnswers[currentQuestion] === shuffledQuestions[currentQuestion].correct) {
         score++;
-        document.getElementById("score").textContent = `Счет: ${score}`;
     }
     currentQuestion++;
     showQuestion();
 });
 
-document.getElementById("preview-btn").addEventListener("click", showPreviewResult);
-
-// Инициализация теста
 showQuestion();
