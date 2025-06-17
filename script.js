@@ -1288,11 +1288,19 @@ const questions = [
     }
 ];
 
+
 let isReversedOrder = false;
 let currentQuestion = 0;
 let score = 0;
 let userAnswers = [];
 const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+
+function resetReverseButton() {
+    const reverseOrderBtn = document.getElementById("reverse-order-btn");
+    const newBtn = reverseOrderBtn.cloneNode(true);
+    reverseOrderBtn.parentNode.replaceChild(newBtn, reverseOrderBtn);
+    return newBtn;
+}
 
 function showQuestion() {
     const questionElement = document.getElementById("question");
@@ -1355,7 +1363,8 @@ function showPreviewResult() {
     totalQuestionsElement.textContent = answeredQuestions;
     percentageElement.textContent = answeredQuestions > 0 ? Math.round((currentScore / answeredQuestions) * 100) : 0;
 
-    const reverseOrderBtn = document.getElementById("reverse-order-btn");
+    // Сбрасываем обработчики кнопки
+    const reverseOrderBtn = resetReverseButton();
     reverseOrderBtn.textContent = "Показать в обратном порядке";
     reverseOrderBtn.addEventListener("click", () => {
         isReversedOrder = !isReversedOrder;
@@ -1427,7 +1436,8 @@ function showResult() {
     totalQuestionsElement.textContent = shuffledQuestions.length;
     percentageElement.textContent = Math.round((score / shuffledQuestions.length) * 100);
 
-    const reverseOrderBtn = document.getElementById("reverse-order-btn");
+    // Сбрасываем обработчики кнопки
+    const reverseOrderBtn = resetReverseButton();
     reverseOrderBtn.textContent = "Показать в обратном порядке";
     reverseOrderBtn.addEventListener("click", () => {
         isReversedOrder = !isReversedOrder;
@@ -1489,6 +1499,7 @@ function showResult() {
     });
 }
 
+// Инициализация
 document.getElementById("preview-btn").addEventListener("click", showPreviewResult);
 document.getElementById("next-btn").addEventListener("click", () => {
     if (userAnswers[currentQuestion] === shuffledQuestions[currentQuestion].correct) {
