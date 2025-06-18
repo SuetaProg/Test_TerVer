@@ -986,7 +986,7 @@ const questions = [
             "cov(ξ, η) = Dξ + Dη + 2cov(ξ, η)",
             "cov(ξ, η) = Dξ − Dη − 2cov(ξ, η)"
         ],
-        correct: 0,
+        correct: 2,
         explanation: "Это свойство связано с дисперсией суммы случайных величин."
     },
     {
